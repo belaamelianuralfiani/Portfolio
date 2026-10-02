@@ -6,6 +6,7 @@ import smkLogo from '../assets/education/cijulang.jpeg';
 import iwuLogo from '../assets/education/iwu.svg';
 import collageLeft from '../assets/education/kiri.png';
 import collageRight from '../assets/education/kanan.png';
+import skillsBg from '../assets/skills/skills-bg.png';
 
 export const Education: React.FC = () => {
   return (
@@ -149,8 +150,11 @@ export const Education: React.FC = () => {
 
       </div>
 
-      {/* 4. STRIP BIRU TERANG DI BAGIAN DASAR */}
-      <div className="w-full h-8 sm:h-12 md:h-16 lg:h-18 bg-[#2DA8FE] relative z-20 shrink-0" />
+      {/* 4. STRIP DASAR TRANSISI SKILLS */}
+      <div
+        className="w-full h-10 sm:h-14 md:h-20 bg-cover bg-top bg-no-repeat relative z-20 shrink-0"
+        style={{ backgroundImage: `url(${skillsBg})` }}
+      />
     </section>
   );
 };

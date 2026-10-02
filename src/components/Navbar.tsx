@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-type SectionName = 'home' | 'about' | 'education' | 'works' | 'contact';
+type SectionName = 'home' | 'about' | 'education' | 'skills' | 'works' | 'contact';
 
 export const Navbar: React.FC = () => {
   const [search, setSearch] = useState('');
@@ -11,7 +11,7 @@ export const Navbar: React.FC = () => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
 
-      const sections: SectionName[] = ['home', 'about', 'education', 'works', 'contact'];
+      const sections: SectionName[] = ['home', 'about', 'education', 'skills', 'works', 'contact'];
       const scrollPosition = window.scrollY + 140;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -30,17 +30,22 @@ export const Navbar: React.FC = () => {
 
   const isAbout = activeSection === 'about';
   const isEducation = activeSection === 'education';
+  const isSkills = activeSection === 'skills';
   const isHome = activeSection === 'home';
 
   // Helper untuk mendapatkan class link navigasi sesuai section yang aktif
   const getLinkClasses = (linkName: 'HOME' | 'ABOUT ME' | 'WORKS' | 'CONTACT') => {
     const isLinkActive =
       (linkName === 'HOME' && activeSection === 'home') ||
-      (linkName === 'ABOUT ME' && (activeSection === 'about' || activeSection === 'education')) ||
+      (linkName === 'ABOUT ME' && (activeSection === 'about' || activeSection === 'education' || activeSection === 'skills')) ||
       (linkName === 'WORKS' && activeSection === 'works') ||
       (linkName === 'CONTACT' && activeSection === 'contact');
 
     const baseClasses = 'font-black text-xs sm:text-sm md:text-base tracking-[0.14em] sm:tracking-[0.18em] transition-all hover:scale-105';
+
+    if (isSkills) {
+      return `${baseClasses} ${isLinkActive ? 'text-[#fcc990]' : 'text-white hover:text-[#fcc990]'}`;
+    }
 
     if (isEducation) {
       return `${baseClasses} ${isLinkActive ? 'text-[#f095ae]' : 'text-[#0163cb] hover:text-[#f095ae]'}`;
@@ -56,7 +61,7 @@ export const Navbar: React.FC = () => {
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 px-4 sm:px-10 lg:px-20 ${
-        isHome || isAbout || isEducation
+        isHome || isAbout || isEducation || isSkills
           ? 'bg-transparent pt-3 sm:pt-6 md:pt-8 pb-1 sm:pb-2'
           : isScrolled
           ? 'bg-[#0d2864]/90 backdrop-blur-md shadow-lg py-2.5 sm:py-3.5 border-b border-white/10'
@@ -100,7 +105,9 @@ export const Navbar: React.FC = () => {
         <div className="relative w-64 sm:w-80">
           <div
             className={`flex items-center w-full h-8 sm:h-9 rounded-full border-2 px-3 transition-colors ${
-              isEducation
+              isSkills
+                ? 'bg-transparent border-[#fcc990]'
+                : isEducation
                 ? 'bg-transparent border-[#0163cb]'
                 : isAbout
                 ? 'bg-transparent border-[#b22d27]'
@@ -110,10 +117,12 @@ export const Navbar: React.FC = () => {
             <input
               type="text"
               value={search}
-              placeholder={isEducation || isAbout ? 'Search...' : ''}
+              placeholder={isSkills || isEducation || isAbout ? 'Search...' : ''}
               onChange={(e) => setSearch(e.target.value)}
               className={`w-full bg-transparent text-xs sm:text-sm focus:outline-hidden pr-8 ${
-                isEducation
+                isSkills
+                  ? 'text-[#fcc990] placeholder-[#fcc990]/60'
+                  : isEducation
                   ? 'text-[#0163cb] placeholder-[#0163cb]/60'
                   : isAbout
                   ? 'text-[#b22d27] placeholder-[#b22d27]/60'
@@ -124,7 +133,9 @@ export const Navbar: React.FC = () => {
               type="button"
               aria-label="Search"
               className={`absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-transform active:scale-95 ${
-                isEducation
+                isSkills
+                  ? 'bg-[#fcc990] hover:bg-[#eab375]'
+                  : isEducation
                   ? 'bg-[#0163cb] hover:bg-[#0152a8]'
                   : isAbout
                   ? 'bg-[#b22d27] hover:bg-[#972621]'
@@ -133,7 +144,11 @@ export const Navbar: React.FC = () => {
             >
               <svg
                 className={`w-3.5 h-3.5 ${
-                  isEducation || isAbout ? 'text-white' : 'text-[#1F62DC]'
+                  isSkills
+                    ? 'text-[#123B91]'
+                    : isEducation || isAbout
+                    ? 'text-white'
+                    : 'text-[#1F62DC]'
                 }`}
                 fill="none"
                 stroke="currentColor"

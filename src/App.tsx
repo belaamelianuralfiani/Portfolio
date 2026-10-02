@@ -3,6 +3,7 @@ import heroBg from './assets/hero/hero-bg.png';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { About } from './components/About';
+import { Education } from './components/Education';
 import { Skills } from './components/Skills';
 import { Services } from './components/Services';
 import { Projects } from './components/Projects';
@@ -24,6 +25,7 @@ export const App: React.FC = () => {
 
       <main>
         <About />
+        <Education />
         <Skills />
         <Services />
         <Projects />

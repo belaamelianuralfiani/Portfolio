@@ -1,38 +1,107 @@
-import React from 'react';
+import React, { useState } from 'react';
 import aboutMainImg from '../assets/about/about-main-2x.png';
 import type { PageId } from '../types';
-import { Navbar } from '../components/Navbar';
 
 interface AboutSectionProps {
   onNavigate?: (page: PageId) => void;
+  activePage?: PageId;
 }
 
 export const AboutSection: React.FC<AboutSectionProps> = ({ onNavigate }) => {
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleNavClick = (page: PageId) => {
+    if (onNavigate) {
+      onNavigate(page);
+    } else {
+      const el = document.getElementById(page);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    const q = searchQuery.toLowerCase();
+    if (q.includes('home')) handleNavClick('home');
+    else if (q.includes('skill')) handleNavClick('skills');
+    else if (q.includes('work')) handleNavClick('works');
+    else if (q.includes('contact')) handleNavClick('contact');
+  };
+
   return (
-    <section className="relative w-full min-h-screen flex flex-col justify-between overflow-hidden bg-[#f79fb0] select-none">
-      {/* Top Navbar with Pink Theme */}
-      <div className="relative z-30">
-        <Navbar
-          activePage="about"
-          onNavigate={(page) => onNavigate && onNavigate(page)}
-          theme="pink"
+    <section
+      id="about"
+      className="relative w-full bg-[#f79fb0] select-none flex items-center justify-center overflow-hidden"
+    >
+      <div className="relative w-full max-w-[1920px] aspect-[16/9] mx-auto shadow-2xl overflow-hidden">
+        <img
+          src={aboutMainImg}
+          alt="About Me - Bela Amelia Nuralfiani | Graphic Artist, Illustrator & 3D Designer"
+          className="w-full h-full object-cover select-none pointer-events-none"
+          loading="lazy"
         />
-      </div>
 
-      {/* Main Section Content matching Canva Slide 2 */}
-      <div className="relative z-20 flex-1 flex flex-col items-center justify-center px-4 max-w-7xl mx-auto w-full py-6">
-        <div className="relative max-w-5xl w-full flex items-center justify-center">
-          <img
-            src={aboutMainImg}
-            alt="About Me - Bela Amelia Nuralfiani"
-            className="w-full h-auto max-h-[75vh] object-contain drop-shadow-[0_15px_35px_rgba(180,60,90,0.25)]"
-          />
+        {/* Interactive Navigation Hotspots */}
+        <div className="absolute inset-0 pointer-events-auto">
+          <div className="absolute top-[6.5%] left-[6.2%] flex items-center space-x-[3.6vw] md:space-x-[4.1vw]">
+            <button
+              onClick={() => handleNavClick('home')}
+              title="Home"
+              aria-label="Home"
+              className="cursor-pointer rounded-lg hover:bg-white/20 active:scale-95 transition-all"
+              style={{ width: '5.2vw', height: '3.2vw' }}
+            />
+            <button
+              onClick={() => handleNavClick('about')}
+              title="About Me"
+              aria-label="About Me"
+              className="cursor-pointer rounded-lg hover:bg-white/20 active:scale-95 transition-all"
+              style={{ width: '8.4vw', height: '3.2vw' }}
+            />
+            <button
+              onClick={() => handleNavClick('works')}
+              title="Works"
+              aria-label="Works"
+              className="cursor-pointer rounded-lg hover:bg-white/20 active:scale-95 transition-all"
+              style={{ width: '6.4vw', height: '3.2vw' }}
+            />
+            <button
+              onClick={() => handleNavClick('contact')}
+              title="Contact"
+              aria-label="Contact"
+              className="cursor-pointer rounded-lg hover:bg-white/20 active:scale-95 transition-all"
+              style={{ width: '7.8vw', height: '3.2vw' }}
+            />
+          </div>
+
+          <form
+            onSubmit={handleSearchSubmit}
+            className="absolute top-[8.0%] right-[5.8%] flex items-center"
+            style={{ width: '15.5vw', height: '2.6vw' }}
+          >
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search..."
+              className="w-full h-full bg-transparent text-white text-[0.9vw] font-semibold px-[1.2vw] outline-none placeholder-transparent focus:placeholder-white/60"
+            />
+            <button
+              type="submit"
+              title="Search"
+              className="cursor-pointer h-full aspect-square rounded-full flex items-center justify-center opacity-0 hover:opacity-20 bg-white"
+            />
+          </form>
         </div>
-      </div>
 
-      {/* Bottom Cream Footer Strip matching Canva Design */}
-      <div className="relative z-20 w-full h-12 sm:h-16 md:h-20 bg-[#faf5f0] shadow-sm" />
+        <h2 className="sr-only">About Me - Bela Amelia Nuralfiani</h2>
+        <p className="sr-only">
+          I'm a passionate Graphic Artist who loves vibrant colors! Skills: graphic design, digital illustration, web design, shirt layout, 3D design, video editing.
+        </p>
+      </div>
     </section>
   );
 };
+
 export default AboutSection;

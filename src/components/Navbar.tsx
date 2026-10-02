@@ -1,169 +1,150 @@
-import React, { useState } from 'react';
-import type { PageId } from '../types';
+import React, { useState, useEffect } from 'react';
 
-interface NavbarProps {
-  activePage: PageId;
-  onNavigate: (page: PageId) => void;
-  theme?: 'blue' | 'pink' | 'cream';
-  onSearch?: (query: string) => void;
-}
+export const Navbar: React.FC = () => {
+  const [search, setSearch] = useState('');
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState<'home' | 'about' | 'works' | 'contact'>('home');
 
-export const Navbar: React.FC<NavbarProps> = ({
-  activePage,
-  onNavigate,
-  theme = 'blue',
-  onSearch,
-}) => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
 
-  const navItems: { id: PageId; label: string }[] = [
-    { id: 'home', label: 'HOME' },
-    { id: 'about', label: 'ABOUT ME' },
-    { id: 'works', label: 'WORKS' },
-    { id: 'contact', label: 'CONTACT' },
-  ];
+      const sections: ('home' | 'about' | 'works' | 'contact')[] = ['home', 'about', 'works', 'contact'];
+      const scrollPosition = window.scrollY + 140;
 
-  // Theme-based colors matching Canva aesthetic
-  const themeStyles = {
-    blue: {
-      text: 'text-[#f5a623]',
-      textHover: 'hover:text-[#ffc107]',
-      active: 'text-[#ffb300] font-black drop-shadow-[0_2px_8px_rgba(255,179,0,0.5)]',
-      searchBorder: 'border-[#f5a623]',
-      searchBg: 'bg-[#0f3b82]/70',
-      searchButton: 'bg-[#f5a623] text-[#0f3b82]',
-      mobileBg: 'bg-[#1250a6]',
-    },
-    pink: {
-      text: 'text-white/90',
-      textHover: 'hover:text-white',
-      active: 'text-[#b71c1c] font-black drop-shadow-[0_2px_8px_rgba(183,28,28,0.3)]',
-      searchBorder: 'border-[#c2185b]',
-      searchBg: 'bg-[#ad1457]/40',
-      searchButton: 'bg-[#c2185b] text-white',
-      mobileBg: 'bg-[#e91e63]',
-    },
-    cream: {
-      text: 'text-[#8b263e]',
-      textHover: 'hover:text-[#a93226]',
-      active: 'text-[#a93226] font-black drop-shadow-[0_2px_8px_rgba(169,50,38,0.3)]',
-      searchBorder: 'border-[#a93226]',
-      searchBg: 'bg-[#f0e6dc]/80',
-      searchButton: 'bg-[#a93226] text-white',
-      mobileBg: 'bg-[#fdfaf6]',
-    },
-  }[theme];
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i]);
+        if (el && el.offsetTop <= scrollPosition) {
+          setActiveSection(sections[i]);
+          break;
+        }
+      }
+    };
 
-  const handleSearchSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onSearch) onSearch(searchQuery);
-  };
+    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const isAbout = activeSection === 'about';
 
   return (
-    <nav className="w-full px-4 sm:px-8 md:px-14 py-4 md:py-6 flex items-center justify-between z-30 transition-all duration-300">
-      {/* Navigation Links (Desktop) */}
-      <div className="flex items-center space-x-6 sm:space-x-10 md:space-x-14">
-        {navItems.map((item) => {
-          const isActive = activePage === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => {
-                onNavigate(item.id);
-                setIsMobileMenuOpen(false);
-              }}
-              className={`cursor-pointer tracking-wider text-sm sm:text-base md:text-lg transition-all duration-200 transform hover:scale-105 ${
-                isActive
-                  ? themeStyles.active
-                  : `${themeStyles.text} font-bold ${themeStyles.textHover}`
-              }`}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Search Bar matching Canva rounded pill style */}
-      <div className="hidden sm:block">
-        <form
-          onSubmit={handleSearchSubmit}
-          className={`flex items-center rounded-full border-2 ${themeStyles.searchBorder} ${themeStyles.searchBg} backdrop-blur-md px-3 py-1 shadow-inner w-44 sm:w-56 md:w-64 transition-all duration-200 focus-within:w-72`}
-        >
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-transparent text-white text-xs sm:text-sm px-2 py-0.5 outline-none placeholder-white/50"
-          />
-          <button
-            type="submit"
-            className={`w-6 h-6 rounded-full flex items-center justify-center ${themeStyles.searchButton} transition-transform hover:scale-110`}
+    <header
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 px-4 sm:px-10 lg:px-20 ${
+        isAbout
+          ? 'bg-[#F08DA1] py-2.5 sm:py-3.5'
+          : isScrolled
+          ? 'bg-[#0d2864]/90 backdrop-blur-md shadow-lg py-2.5 sm:py-3.5 border-b border-white/10'
+          : 'bg-transparent pt-3 sm:pt-6 md:pt-8 pb-1 sm:pb-2'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-5 md:gap-6">
+        {/* Navigation Links */}
+        <nav className="flex items-center gap-4 xs:gap-6 sm:gap-10 md:gap-14 flex-wrap justify-center">
+          <a
+            href="#home"
+            onClick={() => setActiveSection('home')}
+            className={`font-black text-xs sm:text-sm md:text-base tracking-[0.14em] sm:tracking-[0.18em] transition-all hover:scale-105 ${
+              activeSection === 'home'
+                ? isAbout
+                  ? 'text-[#b22d27]'
+                  : 'text-[#FFDD55]'
+                : isAbout
+                ? 'text-white hover:text-[#b22d27]'
+                : 'text-white hover:text-[#FFDD55]'
+            }`}
           >
-            <svg
-              className="w-3.5 h-3.5 fill-current"
-              viewBox="0 0 24 24"
-            >
-              <path d="M10 2a8 8 0 105.293 14.707l5 5a1 1 0 001.414-1.414l-5-5A8 8 0 0010 2zm-6 8a6 6 0 1112 0 6 6 0 01-12 0z" />
-            </svg>
-          </button>
-        </form>
-      </div>
+            HOME
+          </a>
+          <a
+            href="#about"
+            onClick={() => setActiveSection('about')}
+            className={`font-black text-xs sm:text-sm md:text-base tracking-[0.14em] sm:tracking-[0.18em] transition-all hover:scale-105 ${
+              activeSection === 'about'
+                ? 'text-[#b22d27]'
+                : 'text-white hover:text-[#FFDD55]'
+            }`}
+          >
+            ABOUT ME
+          </a>
+          <a
+            href="#works"
+            onClick={() => setActiveSection('works')}
+            className={`font-black text-xs sm:text-sm md:text-base tracking-[0.14em] sm:tracking-[0.18em] transition-all hover:scale-105 ${
+              activeSection === 'works'
+                ? isAbout
+                  ? 'text-[#b22d27]'
+                  : 'text-[#FFDD55]'
+                : isAbout
+                ? 'text-white hover:text-[#b22d27]'
+                : 'text-white hover:text-[#FFDD55]'
+            }`}
+          >
+            WORKS
+          </a>
+          <a
+            href="#contact"
+            onClick={() => setActiveSection('contact')}
+            className={`font-black text-xs sm:text-sm md:text-base tracking-[0.14em] sm:tracking-[0.18em] transition-all hover:scale-105 ${
+              activeSection === 'contact'
+                ? isAbout
+                  ? 'text-[#b22d27]'
+                  : 'text-[#FFDD55]'
+                : isAbout
+                ? 'text-white hover:text-[#b22d27]'
+                : 'text-white hover:text-[#FFDD55]'
+            }`}
+          >
+            CONTACT
+          </a>
+        </nav>
 
-      {/* Mobile Hamburger Toggle */}
-      <div className="sm:hidden flex items-center">
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className={`p-2 rounded-lg ${themeStyles.text} focus:outline-none`}
-          aria-label="Toggle menu"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            {isMobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            )}
-          </svg>
-        </button>
-      </div>
-
-      {/* Mobile Dropdown Menu */}
-      {isMobileMenuOpen && (
-        <div className={`sm:hidden absolute top-16 left-4 right-4 ${themeStyles.mobileBg} rounded-2xl p-4 shadow-2xl flex flex-col space-y-3 z-50 border border-white/20`}>
-          {navItems.map((item) => (
+        {/* Pill Search Bar dengan Style Dinamis Sesuai Section */}
+        <div className="relative w-64 sm:w-80">
+          <div
+            className={`flex items-center w-full h-8 sm:h-9 rounded-full border-2 px-3 transition-colors ${
+              isAbout
+                ? 'bg-transparent border-[#b22d27]'
+                : 'bg-[#1F62DC]/60 border-[#E7BA58] shadow-inner'
+            }`}
+          >
+            <input
+              type="text"
+              value={search}
+              placeholder={isAbout ? 'Search...' : ''}
+              onChange={(e) => setSearch(e.target.value)}
+              className={`w-full bg-transparent text-xs sm:text-sm focus:outline-hidden pr-8 ${
+                isAbout ? 'text-[#b22d27] placeholder-[#b22d27]/60' : 'text-white'
+              }`}
+            />
             <button
-              key={item.id}
-              onClick={() => {
-                onNavigate(item.id);
-                setIsMobileMenuOpen(false);
-              }}
-              className={`text-left px-3 py-2 rounded-lg text-base font-bold ${
-                activePage === item.id ? 'bg-white/20 text-white' : 'text-white/80'
+              type="button"
+              aria-label="Search"
+              className={`absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center transition-transform active:scale-95 ${
+                isAbout
+                  ? 'bg-[#b22d27] hover:bg-[#972621]'
+                  : 'bg-[#FFC533] hover:bg-[#ffba17] shadow-sm'
               }`}
             >
-              {item.label}
+              <svg
+                className={`w-3.5 h-3.5 ${isAbout ? 'text-white' : 'text-[#1F62DC]'}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35m1.85-5.65a7 7 0 11-14 0 7 7 0 0114 0z"
+                />
+              </svg>
             </button>
-          ))}
-          <form onSubmit={handleSearchSubmit} className="pt-2">
-            <div className={`flex items-center rounded-full border-2 ${themeStyles.searchBorder} bg-black/20 px-3 py-1`}>
-              <input
-                type="text"
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-transparent text-white text-xs px-2 outline-none placeholder-white/50"
-              />
-              <button type="submit" className={`w-6 h-6 rounded-full flex items-center justify-center ${themeStyles.searchButton}`}>
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M10 2a8 8 0 105.293 14.707l5 5a1 1 0 001.414-1.414l-5-5A8 8 0 0010 2zm-6 8a6 6 0 1112 0 6 6 0 01-12 0z" />
-                </svg>
-              </button>
-            </div>
-          </form>
+          </div>
         </div>
-      )}
-    </nav>
+      </div>
+    </header>
   );
 };
+
+export default Navbar;

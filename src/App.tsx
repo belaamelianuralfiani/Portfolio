@@ -5,8 +5,8 @@ import { Hero } from './components/Hero';
 import { About } from './components/About';
 import { Education } from './components/Education';
 import { Skills } from './components/Skills';
-import { Services } from './components/Services';
-import { Projects } from './components/Projects';
+import { Career } from './components/Career';
+import { Works } from './components/Work';
 import { Footer } from './components/Footer';
 
 export const App: React.FC = () => {
@@ -27,8 +27,8 @@ export const App: React.FC = () => {
         <About />
         <Education />
         <Skills />
-        <Services />
-        <Projects />
+        <Career />
+        <Works />
       </main>
 
       <Footer />
